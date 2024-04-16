@@ -76,7 +76,6 @@ try
             }
             catch (Exception)
             {
-
                 throw;
             }
             
@@ -90,6 +89,6 @@ catch (Exception)
     throw;
 } finally
 {
-    driver.Quit();
+    //driver.Quit();
 }
 
