@@ -3,10 +3,11 @@
     public class Edition
     {
         public int EditionId { get; set; }
-        public int WASHESEdition { get; set; }
         public int Year { get; set; }
         public string Title { get; set; }
-        public int Quantity { get; set; }
+        public string Location { get; set; }
+        public DateTime Date { get; set; }
+        public string Proceedings { get; set; }
         public List<Paper> Papers { get; set; }
     }
 }
