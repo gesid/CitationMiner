@@ -1,16 +1,18 @@
-﻿using OpenQA.Selenium;
+﻿using Microsoft.AspNetCore.Http;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using ScrapingWashes.Models;
+using System.Globalization;
 
 namespace ScrapingWashes.Services
 {
     public class SeleniumService
     {
         private readonly EditionService _editionService;
-
         public List<dynamic> _allEditions = [];
-        public ChromeDriver _driver = new();
         public List<dynamic> detailsArticles = [];
+
+        public ChromeDriver _driver = new();
 
         public SeleniumService(EditionService editionService)
         {
@@ -29,9 +31,9 @@ namespace ScrapingWashes.Services
             {
                 _allEditions.Add(new
                 {
-                    Title = item.FindElement(By.ClassName("title")).Text,
+                    Title = item.FindElement(By.ClassName("title")).Text.Substring(6),
                     Link = item.FindElement(By.TagName("a")).GetAttribute("href"),
-                    Date = item.FindElement(By.CssSelector("div.published")).Text
+                    Date = item.FindElement(By.CssSelector("div.published")).Text.Replace("Publicado: ", "")
                 });
             }
 
@@ -65,18 +67,19 @@ namespace ScrapingWashes.Services
                 }
 
                 // save editions
+                var date = DateTime.ParseExact(item.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 _editionService.AddEdition(new Edition
                 {
-                    Year = new DateTime(item.Date).Year,
+                    Year = date.Year,
                     Title = item.Title,
                     Location = "",
-                    Date = item.Date,
+                    Date = date,
                     Proceedings = item.Link,
                 });
             }
         }
 
-        private void SaveEdditions()
+        private void SaveEEditions()
         {
             foreach (var item in _allEditions)
             {
