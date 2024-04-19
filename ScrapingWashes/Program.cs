@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScrapingWashes.Context;
-using ScrapingWashes.Scraping;
 using ScrapingWashes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
