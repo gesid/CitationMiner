@@ -1,13 +1,17 @@
 ﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using ScrapingWashes.Context;
+using ScrapingWashes.Models;
+using ScrapingWashes.Repository;
 using ScrapingWashes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<SeleniumService>();
-builder.Services.AddScoped<EditionService>();
+builder.Services.AddScoped<BaseModelRepository<Paper>>();
+builder.Services.AddScoped<BaseModelRepository<Edition>>();
+builder.Services.AddScoped<BaseModelRepository<Author>>();
+builder.Services.AddScoped<BaseModelRepository<AuthorPaper>>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

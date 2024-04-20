@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ScrapingWashes.Context;
 
@@ -11,9 +12,11 @@ using ScrapingWashes.Context;
 namespace ScrapingWashes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240420173315_updatepk")]
+    partial class updatepk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,36 +44,15 @@ namespace ScrapingWashes.Migrations
                     b.Property<int>("PaperId")
                         .HasColumnType("int");
 
-                    b.Property<string>("State")
+                    b.Property<string>("StateOfBrazil")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AuthorId");
 
-                    b.ToTable("Authors");
-                });
-
-            modelBuilder.Entity("ScrapingWashes.Models.AuthorPaper", b =>
-                {
-                    b.Property<int>("AuthorPaperId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorPaperId"));
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaperId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AuthorPaperId");
-
-                    b.HasIndex("AuthorId");
-
                     b.HasIndex("PaperId");
 
-                    b.ToTable("AuthorPapers");
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("ScrapingWashes.Models.Edition", b =>
@@ -159,23 +141,13 @@ namespace ScrapingWashes.Migrations
                     b.ToTable("Papers");
                 });
 
-            modelBuilder.Entity("ScrapingWashes.Models.AuthorPaper", b =>
+            modelBuilder.Entity("ScrapingWashes.Models.Author", b =>
                 {
-                    b.HasOne("ScrapingWashes.Models.Author", "Author")
-                        .WithMany("AuthorPapers")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ScrapingWashes.Models.Paper", "Paper")
-                        .WithMany("PaperAuthors")
+                    b.HasOne("ScrapingWashes.Models.Paper", null)
+                        .WithMany("Authors")
                         .HasForeignKey("PaperId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Author");
-
-                    b.Navigation("Paper");
                 });
 
             modelBuilder.Entity("ScrapingWashes.Models.Paper", b =>
@@ -187,11 +159,6 @@ namespace ScrapingWashes.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ScrapingWashes.Models.Author", b =>
-                {
-                    b.Navigation("AuthorPapers");
-                });
-
             modelBuilder.Entity("ScrapingWashes.Models.Edition", b =>
                 {
                     b.Navigation("Papers");
@@ -199,7 +166,7 @@ namespace ScrapingWashes.Migrations
 
             modelBuilder.Entity("ScrapingWashes.Models.Paper", b =>
                 {
-                    b.Navigation("PaperAuthors");
+                    b.Navigation("Authors");
                 });
 #pragma warning restore 612, 618
         }

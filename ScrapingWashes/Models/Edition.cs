@@ -1,7 +1,10 @@
-﻿namespace ScrapingWashes.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ScrapingWashes.Models
 {
     public class Edition
     {
+        [Key]
         public int EditionId { get; set; }
         public int Year { get; set; }
         public string Title { get; set; }
