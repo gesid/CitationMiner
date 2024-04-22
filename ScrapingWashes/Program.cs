@@ -1,6 +1,5 @@
 ﻿using Hangfire;
 using Hangfire.Dashboard;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using ScrapingWashes.Context;
 using ScrapingWashes.Models;
@@ -47,6 +46,11 @@ app.UseHangfireDashboard("", new DashboardOptions
 
 RecurringJob.AddOrUpdate<SeleniumService>(
     "SeleniumService",
+    x => x.Init(),
+    Cron.Daily(6, 0));
+
+RecurringJob.AddOrUpdate<ScrapingWashesService>(
+    "ScrapingWashesService",
     x => x.Init(),
     Cron.Daily(6, 0));
 
