@@ -47,6 +47,8 @@ namespace ScrapingWashes.Services
             _allEditions.Reverse();
 
             await SaveEditions();
+            await SavePapers();
+
             _driver.Quit();
             return true;
         }
@@ -82,15 +84,14 @@ namespace ScrapingWashes.Services
                     {
                         Title = article.Text,
                         Link = article.FindElement(By.TagName("a")).GetAttribute("href"),
-                        Year = edition.Year.ToString()
+                        Year = edition.Year,
+                        EditionId = edition.EditionId
                     });
                 }
-
-                await SavePapers(edition.EditionId);
             }
         }
 
-        private async Task SavePapers(int editionId)
+        private async Task SavePapers()
         {
             foreach (var item in _detailsArticles)
             {
@@ -99,7 +100,7 @@ namespace ScrapingWashes.Services
                 var paper = await _paperRepository.AddOrUpdateAsync(new Paper
                 {
                     Title = item.Title,
-                    Year = int.Parse(item.Year),
+                    Year = item.Year,
                     Abstract = "",
                     Summary = "",
                     Keywords = "",
@@ -107,7 +108,7 @@ namespace ScrapingWashes.Services
                     Link = "",
                     Citation = "",
                     References = "",
-                    EditionId = editionId,
+                    EditionId = item.EditionId,
                 }, where: x => x.Title == item.Title);
 
                 await SaveAutors(paper.PaperId);

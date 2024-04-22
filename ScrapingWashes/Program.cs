@@ -1,4 +1,6 @@
 ﻿using Hangfire;
+using Hangfire.Dashboard;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using ScrapingWashes.Context;
 using ScrapingWashes.Models;
@@ -6,6 +8,9 @@ using ScrapingWashes.Repository;
 using ScrapingWashes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors();
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<SeleniumService>();
 builder.Services.AddScoped<BaseModelRepository<Paper>>();
@@ -25,7 +30,20 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
-app.UseHangfireDashboard("");
+app.UseRouting();
+
+app.UseCors(option => option
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
+app.UseAuthorization();
+
+app.UseHangfireDashboard("", new DashboardOptions
+{
+    Authorization = new[] { new MyAuthorizationFilter() },
+    IsReadOnlyFunc = (DashboardContext context) => false,
+});
 
 RecurringJob.AddOrUpdate<SeleniumService>(
     "SeleniumService",
@@ -33,3 +51,13 @@ RecurringJob.AddOrUpdate<SeleniumService>(
     Cron.Daily(6, 0));
 
 app.Run();
+
+public class MyAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        var httpContext = context.GetHttpContext();
+
+        return true;
+    }
+}
