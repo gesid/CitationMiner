@@ -44,10 +44,10 @@ app.UseHangfireDashboard("", new DashboardOptions
     IsReadOnlyFunc = (DashboardContext context) => false,
 });
 
-RecurringJob.AddOrUpdate<SeleniumService>(
-    "SeleniumService",
-    x => x.Init(),
-    Cron.Daily(6, 0));
+//RecurringJob.AddOrUpdate<SeleniumService>(
+//    "SeleniumService",
+//    x => x.Init(),
+//    Cron.Daily(6, 0));
 
 RecurringJob.AddOrUpdate<ScrapingWashesService>(
     "ScrapingWashesService",

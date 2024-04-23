@@ -46,7 +46,7 @@ namespace ScrapingWashes.Services
             _allEditions.Reverse();
 
             await SaveEditions();
-            //await SavePapers();
+            await SavePapers();
 
             return true;
         }
@@ -67,72 +67,74 @@ namespace ScrapingWashes.Services
                     Proceedings = item.Link,
                 }, where: x => x.Title == item.Title);
 
-                //_driver.Navigate().GoToUrl(item.Link);
+                var document = _driver.Load(item.Link);
+                var articles = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/div/div[2]").SelectNodes("//*[@id=\"pkp_content_main\"]/div/div/div[2]/div/ul/li");
 
-                //var articles = _driver.FindElement(By.ClassName("sections"));
 
-                //if (!articles.FindElement(By.TagName("h2")).Text.Contains("ARTIGOS"))
-                //{
-                //    continue;
-                //}
+                if (articles is null)
+                {
+                    continue;
+                }
 
-                //foreach (var article in articles.FindElements(By.ClassName("obj_article_summary")))
-                //{
-                //    _detailsArticles.Add(new ScrapingDTO
-                //    {
-                //        Title = article.Text,
-                //        Link = article.FindElement(By.TagName("a")).GetAttribute("href"),
-                //        Year = edition.Year,
-                //        EditionId = edition.EditionId
-                //    });
-                //}
+                foreach (var article in articles)
+                {
+                    _detailsArticles.Add(new ScrapingDTO
+                    {
+                        Title = article.SelectSingleNode(".//div[1]/div[1]/a").InnerText.Trim(),
+                        Link = article.SelectSingleNode(".//div[1]/div[1]/a").GetAttributeValue("href", "").Trim(),
+                        Year = edition.Year,
+                        EditionId = edition.EditionId
+                    });
+                }
             }
         }
 
-        //private async Task SavePapers()
-        //{
-        //    foreach (var item in _detailsArticles)
-        //    {
-        //        _driver.Navigate().GoToUrl(item.Link);
+        private async Task SavePapers()
+        {
+            foreach (var item in _detailsArticles)
+            {
+                var document = _driver.Load(item.Link);
 
-        //        var paper = await _paperRepository.AddOrUpdateAsync(new Paper
-        //        {
-        //            Title = item.Title,
-        //            Year = item.Year,
-        //            Abstract = "",
-        //            Summary = "",
-        //            Keywords = "",
-        //            Type = 0,
-        //            Link = "",
-        //            Citation = "",
-        //            References = "",
-        //            EditionId = item.EditionId,
-        //        }, where: x => x.Title == item.Title);
+                var paper = await _paperRepository.AddOrUpdateAsync(new Paper
+                {
+                    Title = item.Title,
+                    Year = item.Year,
+                    Abstract = "",
+                    Summary = "",
+                    Keywords = "",
+                    Type = 0,
+                    Link = "",
+                    Citation = "",
+                    References = "",
+                    EditionId = item.EditionId,
+                }, where: x => x.Title == item.Title);
 
-        //        await SaveAutors(paper.PaperId);
-        //    }
-        //}
+                await SaveAutors(document, paper.PaperId);
+            }
+        }
 
-        //private async Task SaveAutors(int paperId)
-        //{
-        //    var authors = _driver.FindElement(By.ClassName("authors")).FindElements(By.TagName("span"));
-        //    foreach (var author in authors)
-        //    {
-        //        var name = _driver.FindElement(By.ClassName("name")).Text;
-        //        var authorSaved = await _authorRepository.AddOrUpdateAsync(new Author
-        //        {
-        //            Name = name,
-        //            State = "teste",
-        //            Instituition = _driver.FindElement(By.ClassName("affiliation")).Text,
-        //            PaperId = paperId
-        //        }, where: x => x.Name == name && x.PaperId == paperId);
+        private async Task SaveAutors(HtmlDocument document, int paperId)
+        {
+            var authors = document.DocumentNode.SelectNodes("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/ul");
+            foreach (var author in authors)
+            {
+                var name = author.SelectSingleNode(".//li[1]/span[1]").InnerText.Trim();
+                var instituition = author.SelectSingleNode(".//li[1]/span[2]");
 
-        //        await _authorPaperRepository.AddOrUpdateAsync(new AuthorPaper
-        //        {
-        //            AuthorId = authorSaved.AuthorId,
-        //            PaperId = paperId
-        //        }, where: x => x.AuthorId == authorSaved.AuthorId && x.PaperId == paperId);
-        //    }
-        //}
+                var authorSaved = await _authorRepository.AddOrUpdateAsync(new Author
+                {
+                    Name = name,
+                    State = "teste",
+                    Instituition = instituition is not null ? instituition.InnerText.Trim() : null,
+                    PaperId = paperId
+                }, where: x => x.Name == name && x.PaperId == paperId);
+
+                await _authorPaperRepository.AddOrUpdateAsync(new AuthorPaper
+                {
+                    AuthorId = authorSaved.AuthorId,
+                    PaperId = paperId
+                }, where: x => x.AuthorId == authorSaved.AuthorId && x.PaperId == paperId);
+            }
+        }
     }
 }
