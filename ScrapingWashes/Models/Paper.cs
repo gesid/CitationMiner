@@ -10,11 +10,11 @@ namespace ScrapingWashes.Models
         public string Title { get; set; }
         public int Year { get; set; }
         public string Abstract { get; set; }
-        public string Summary { get; set; }
-        public string Keywords { get; set; }
+        public string? Summary { get; set; }
+        public string? Keywords { get; set; }
         public ETypePaper Type { get; set; }
         public string Link { get; set; }
-        public string References { get; set; }
+        public string? References { get; set; }
         public string Citation { get; set; }
         public List<AuthorPaper> PaperAuthors { get; set; }
         public DateTime ObtenDate { get; set; } = DateTime.UtcNow;

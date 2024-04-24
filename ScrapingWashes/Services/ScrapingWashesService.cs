@@ -17,7 +17,9 @@ namespace ScrapingWashes.Services
 
         public HtmlWeb _driver = new();
 
-        public ScrapingWashesService(BaseModelRepository<Edition> editionRepository, BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository, BaseModelRepository<AuthorPaper> authorPaperRepository)
+        public ScrapingWashesService(BaseModelRepository<Edition> editionRepository, 
+            BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository, 
+            BaseModelRepository<AuthorPaper> authorPaperRepository)
         {
             _editionRepository = editionRepository;
             _paperRepository = paperRepository;
@@ -95,17 +97,23 @@ namespace ScrapingWashes.Services
             {
                 var document = _driver.Load(item.Link);
 
+                var summary = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[1]/p");
+                var keywords = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[2]/span[2]");
+                var references = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[3]/div");
+
+
+
                 var paper = await _paperRepository.AddOrUpdateAsync(new Paper
                 {
                     Title = item.Title,
                     Year = item.Year,
                     Abstract = "",
-                    Summary = "",
-                    Keywords = "",
+                    Summary = summary is not null ? summary.InnerText.Trim() : null,
+                    Keywords = keywords is not null ? keywords.InnerText.Trim() : null,
                     Type = 0,
-                    Link = "",
+                    Link = item.Link,
                     Citation = "",
-                    References = "",
+                    References = references is not null ? references.InnerText.Trim() : null,
                     EditionId = item.EditionId,
                 }, where: x => x.Title == item.Title);
 
