@@ -100,19 +100,19 @@ namespace ScrapingWashes.Services
                 var summary = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[1]/p");
                 var keywords = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[2]/span[2]");
                 var references = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[3]/div");
-
+                var citation = await TakeCitation(item.Title);
 
 
                 var paper = await _paperRepository.AddOrUpdateAsync(new Paper
                 {
                     Title = item.Title,
                     Year = item.Year,
-                    Abstract = "",
+                    Abstract = null,
                     Summary = summary is not null ? summary.InnerText.Trim() : null,
                     Keywords = keywords is not null ? keywords.InnerText.Trim() : null,
                     Type = 0,
                     Link = item.Link,
-                    Citation = "",
+                    Citation = citation,
                     References = references is not null ? references.InnerText.Trim() : null,
                     EditionId = item.EditionId,
                 }, where: x => x.Title == item.Title);
@@ -143,6 +143,22 @@ namespace ScrapingWashes.Services
                     PaperId = paperId
                 }, where: x => x.AuthorId == authorSaved.AuthorId && x.PaperId == paperId);
             }
+        }
+
+        private async Task<string?> TakeCitation(string title)
+        {
+            var document = _driver.Load("https://scholar.google.com/scholar?hl=pt-BR&as_sdt=0%2C5&q=" + title.Replace(" ", "+") + "&btnG=");
+            var citar = document.DocumentNode.SelectSingleNode("/html/body/div/div[10]/div[2]/div[3]/div[2]/div");
+
+            Thread.Sleep(5000);
+            if (citar is not null)
+            {
+                document = _driver.Load("https://scholar.google.com/scholar?q=info:" + citar.GetAttributeValue("data-cid", "") + ":scholar.google.com/&output=cite&scirp=0&hl=pt-BR");
+            }
+
+            var citation = document.DocumentNode.SelectSingleNode("/html/body/div[1]/table/tbody/tr[3]/td/div");
+
+            return citation is not null ? citation.InnerText.Trim() : null;
         }
     }
 }

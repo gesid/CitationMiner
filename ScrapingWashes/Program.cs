@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<SeleniumService>();
 builder.Services.AddScoped<BaseModelRepository<Paper>>();
 builder.Services.AddScoped<BaseModelRepository<Edition>>();
 builder.Services.AddScoped<BaseModelRepository<Author>>();
@@ -43,11 +42,6 @@ app.UseHangfireDashboard("", new DashboardOptions
     Authorization = new[] { new MyAuthorizationFilter() },
     IsReadOnlyFunc = (DashboardContext context) => false,
 });
-
-//RecurringJob.AddOrUpdate<SeleniumService>(
-//    "SeleniumService",
-//    x => x.Init(),
-//    Cron.Daily(6, 0));
 
 RecurringJob.AddOrUpdate<ScrapingWashesService>(
     "ScrapingWashesService",
