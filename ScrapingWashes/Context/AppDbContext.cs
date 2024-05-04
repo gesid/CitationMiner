@@ -13,5 +13,6 @@ namespace ScrapingWashes.Context
         public DbSet<Edition> Editions { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<AuthorPaper> AuthorPapers { get; set; }
+        public DbSet<LogErros> LogErros { get; set; }
     }
 }

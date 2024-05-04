@@ -15,6 +15,7 @@ builder.Services.AddScoped<BaseModelRepository<Paper>>();
 builder.Services.AddScoped<BaseModelRepository<Edition>>();
 builder.Services.AddScoped<BaseModelRepository<Author>>();
 builder.Services.AddScoped<BaseModelRepository<AuthorPaper>>();
+builder.Services.AddScoped<ScrapingWashesService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

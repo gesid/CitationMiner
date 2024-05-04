@@ -156,6 +156,8 @@ namespace ScrapingWashes.Services
             var document = new HtmlDocument();
             document.LoadHtml(await response.Content.ReadAsStringAsync());
 
+            Thread.Sleep(5000);
+
             var citar = document.DocumentNode.SelectSingleNode("/html/body/div/div[10]/div[2]/div[3]/div[2]/div");
 
             if (citar is not null)
@@ -165,6 +167,8 @@ namespace ScrapingWashes.Services
             }
 
             var citation = document.DocumentNode.SelectSingleNode("//div[@id='gs_citt']//th[contains(text(), 'APA')]/following-sibling::td//div");
+
+            Thread.Sleep(5000);
 
             return citation is not null ? citation.InnerText.Trim() : null;
         }
