@@ -30,7 +30,11 @@ namespace ScrapingWashes.Repository
                 foreach (var property in properties)
                 {
                     var value = property.GetValue(entity);
-                    property.SetValue(existingEntity, value);
+
+                    if (value != null)
+                    {
+                        property.SetValue(existingEntity, value);
+                    }
                 }
                 await _context.SaveChangesAsync();
                 return existingEntity;

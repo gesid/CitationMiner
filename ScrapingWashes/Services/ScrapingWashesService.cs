@@ -12,19 +12,21 @@ namespace ScrapingWashes.Services
         private readonly BaseModelRepository<Paper> _paperRepository;
         private readonly BaseModelRepository<Author> _authorRepository;
         private readonly BaseModelRepository<AuthorPaper> _authorPaperRepository;
+        private readonly IConfiguration _configuration;
         public List<ScrapingDTO> _allEditions = [];
         public List<ScrapingDTO> _detailsArticles = [];
 
         public HtmlWeb _driver = new();
 
-        public ScrapingWashesService(BaseModelRepository<Edition> editionRepository, 
-            BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository, 
-            BaseModelRepository<AuthorPaper> authorPaperRepository)
+        public ScrapingWashesService(BaseModelRepository<Edition> editionRepository,
+            BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository,
+            BaseModelRepository<AuthorPaper> authorPaperRepository, IConfiguration configuration)
         {
             _editionRepository = editionRepository;
             _paperRepository = paperRepository;
             _authorRepository = authorRepository;
             _authorPaperRepository = authorPaperRepository;
+            _configuration = configuration;
         }
 
         public async Task<bool> Init()
@@ -147,16 +149,22 @@ namespace ScrapingWashes.Services
 
         private async Task<string?> TakeCitation(string title)
         {
-            var document = _driver.Load("https://scholar.google.com/scholar?hl=pt-BR&as_sdt=0%2C5&q=" + title.Replace(" ", "+") + "&btnG=");
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("Cookie", _configuration["Variables:Cookie"]);
+            var response = await client.GetAsync("https://scholar.google.com/scholar?hl=pt-BR&as_sdt=0%2C5&q=" + title.Replace(" ", "+") + "&btnG=");
+
+            var document = new HtmlDocument();
+            document.LoadHtml(await response.Content.ReadAsStringAsync());
+
             var citar = document.DocumentNode.SelectSingleNode("/html/body/div/div[10]/div[2]/div[3]/div[2]/div");
 
-            Thread.Sleep(5000);
             if (citar is not null)
             {
-                document = _driver.Load("https://scholar.google.com/scholar?q=info:" + citar.GetAttributeValue("data-cid", "") + ":scholar.google.com/&output=cite&scirp=0&hl=pt-BR");
+                response = await client.GetAsync("https://scholar.google.com/scholar?q=info:" + citar.GetAttributeValue("data-cid", "") + ":scholar.google.com/&output=cite&scirp=0&hl=pt-BR");
+                document.LoadHtml(await response.Content.ReadAsStringAsync());
             }
 
-            var citation = document.DocumentNode.SelectSingleNode("/html/body/div[1]/table/tbody/tr[3]/td/div");
+            var citation = document.DocumentNode.SelectSingleNode("//div[@id='gs_citt']//th[contains(text(), 'APA')]/following-sibling::td//div");
 
             return citation is not null ? citation.InnerText.Trim() : null;
         }
