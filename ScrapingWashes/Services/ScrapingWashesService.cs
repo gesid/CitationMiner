@@ -99,19 +99,19 @@ namespace ScrapingWashes.Services
             {
                 var document = _driver.Load(item.Link);
 
-                var summary = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[1]/p");
-                var keywords = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[2]/span[2]");
-                var references = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/div[3]/div");
+                var summary = document.DocumentNode.SelectSingleNode("//div[@class='item abstract']/p") ??
+                    document.DocumentNode.SelectSingleNode("//div[@class='item abstract']");
+                var keywords = document.DocumentNode.SelectSingleNode("//div[@class='item keywords']//span[@class='value']");
+                var references = document.DocumentNode.SelectSingleNode("//div[@class='item references']//div[@class='value']");
                 var citation = await TakeCitation(item.Title);
-
 
                 var paper = await _paperRepository.AddOrUpdateAsync(new Paper
                 {
                     Title = item.Title,
                     Year = item.Year,
                     Abstract = null,
-                    Summary = summary is not null ? summary.InnerText.Trim() : null,
-                    Keywords = keywords is not null ? keywords.InnerText.Trim() : null,
+                    Summary = summary is not null ? summary.InnerText.Replace("Resumo", "").Trim() : null,
+                    Keywords = keywords is not null ? string.Join(", ", keywords.InnerText.Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x))) : null,
                     Type = 0,
                     Link = item.Link,
                     Citation = citation,
@@ -156,8 +156,6 @@ namespace ScrapingWashes.Services
             var document = new HtmlDocument();
             document.LoadHtml(await response.Content.ReadAsStringAsync());
 
-            Thread.Sleep(5000);
-
             var citar = document.DocumentNode.SelectSingleNode("/html/body/div/div[10]/div[2]/div[3]/div[2]/div");
 
             if (citar is not null)
@@ -167,8 +165,6 @@ namespace ScrapingWashes.Services
             }
 
             var citation = document.DocumentNode.SelectSingleNode("//div[@id='gs_citt']//th[contains(text(), 'APA')]/following-sibling::td//div");
-
-            Thread.Sleep(5000);
 
             return citation is not null ? citation.InnerText.Trim() : null;
         }

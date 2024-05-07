@@ -31,10 +31,11 @@ namespace ScrapingWashes.Repository
                 {
                     var value = property.GetValue(entity);
 
-                    if (value != null)
+                    if (value == null || value == string.Empty)
                     {
-                        property.SetValue(existingEntity, value);
+                        continue;
                     }
+                    property.SetValue(existingEntity, value);
                 }
                 await _context.SaveChangesAsync();
                 return existingEntity;
