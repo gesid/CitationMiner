@@ -41,9 +41,8 @@ namespace ScrapingWashes.Services
             {
                 _allEditions.Add(new ScrapingDTO
                 {
-                    Title = item.SelectSingleNode(".//a").InnerText.Trim().Substring(6),
-                    Link = item.SelectSingleNode(".//a").GetAttributeValue("href", "").Trim(),
-                    Date = item.SelectSingleNode(".//div[1]/span[2]").InnerText.Trim()
+                    Title = item.SelectSingleNode("//div[@class='obj_issue_summary']/a").InnerText.Trim(),
+                    Link = item.SelectSingleNode("//div[@class='obj_issue_summary']/a").GetAttributeValue("href", "").Trim(),
                 });
             }
 
@@ -60,7 +59,11 @@ namespace ScrapingWashes.Services
             foreach (var item in _allEditions)
             {
                 // save editions
-                var date = DateTime.ParseExact(item.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var document = _driver.Load(item.Link);
+
+                item.Date = document.DocumentNode.SelectSingleNode("//div[@class='published']/span[@class='value']").InnerText.Trim();
+
+                var date = DateTime.ParseExact(item.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
                 var edition = await _editionRepository.AddOrUpdateAsync(new Edition
                 {
@@ -71,7 +74,6 @@ namespace ScrapingWashes.Services
                     Proceedings = item.Link,
                 }, where: x => x.Title == item.Title);
 
-                var document = _driver.Load(item.Link);
                 var articles = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/div/div[2]").SelectNodes("//*[@id=\"pkp_content_main\"]/div/div/div[2]/div/ul/li");
 
 
