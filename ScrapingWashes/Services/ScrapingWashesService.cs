@@ -41,8 +41,8 @@ namespace ScrapingWashes.Services
             {
                 _allEditions.Add(new ScrapingDTO
                 {
-                    Title = item.SelectSingleNode("//div[@class='obj_issue_summary']/a").InnerText.Trim(),
-                    Link = item.SelectSingleNode("//div[@class='obj_issue_summary']/a").GetAttributeValue("href", "").Trim(),
+                    Title = item.SelectSingleNode(".//a").InnerText.Trim(),
+                    Link = item.SelectSingleNode(".//a").GetAttributeValue("href", "").Trim(),
                 });
             }
 
