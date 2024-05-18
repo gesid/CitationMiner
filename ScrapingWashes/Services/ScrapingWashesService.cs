@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using ScrapingWashes.DTOs;
+using ScrapingWashes.Enums;
 using ScrapingWashes.Models;
 using ScrapingWashes.Repository;
 using System.Globalization;
@@ -63,7 +64,7 @@ namespace ScrapingWashes.Services
 
                 item.Date = document.DocumentNode.SelectSingleNode("//div[@class='published']/span[@class='value']").InnerText.Trim();
 
-                var date = DateTime.ParseExact(item.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                var date = DateTime.ParseExact(item.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
 
                 var edition = await _editionRepository.AddOrUpdateAsync(new Edition
                 {
@@ -106,6 +107,9 @@ namespace ScrapingWashes.Services
                 var keywords = document.DocumentNode.SelectSingleNode("//div[@class='item keywords']//span[@class='value']");
                 var references = document.DocumentNode.SelectSingleNode("//div[@class='item references']//div[@class='value']");
                 var citation = await TakeCitation(item.Title);
+                var type = document.DocumentNode.SelectSingleNode("//nav[@class='cmp_breadcrumbs']//li[@class='current']");
+
+
 
                 var paper = await _paperRepository.AddOrUpdateAsync(new Paper
                 {
@@ -114,7 +118,7 @@ namespace ScrapingWashes.Services
                     Abstract = null,
                     Summary = summary is not null ? summary.InnerText.Replace("Resumo", "").Trim() : null,
                     Keywords = keywords is not null ? string.Join(", ", keywords.InnerText.Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x))) : null,
-                    Type = 0,
+                    Type = type is not null ? (type.InnerText.Trim() == "Posters" ? ETypePaper.Poster : type.InnerText.Trim() == "Artigos Curtos" ? ETypePaper.ShortPaper : type.InnerText.Trim() == "Artigos Completos" ? ETypePaper.FullPaper : null) : null,
                     Link = item.Link,
                     Citation = citation,
                     References = references is not null ? references.InnerText.Trim() : null,

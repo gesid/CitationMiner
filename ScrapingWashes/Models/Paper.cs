@@ -12,7 +12,7 @@ namespace ScrapingWashes.Models
         public string? Abstract { get; set; }
         public string? Summary { get; set; }
         public string? Keywords { get; set; }
-        public ETypePaper Type { get; set; }
+        public ETypePaper? Type { get; set; }
         public string Link { get; set; }
         public string? References { get; set; }
         public string? Citation { get; set; }
