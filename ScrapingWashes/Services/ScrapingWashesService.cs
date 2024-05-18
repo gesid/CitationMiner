@@ -64,7 +64,7 @@ namespace ScrapingWashes.Services
 
                 item.Date = document.DocumentNode.SelectSingleNode("//div[@class='published']/span[@class='value']").InnerText.Trim();
 
-                var date = DateTime.ParseExact(item.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                var date = DateTime.ParseExact(item.Date, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None);
 
                 var edition = await _editionRepository.AddOrUpdateAsync(new Edition
                 {
