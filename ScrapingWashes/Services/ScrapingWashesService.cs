@@ -42,7 +42,7 @@ namespace ScrapingWashes.Services
             {
                 _allEditions.Add(new ScrapingDTO
                 {
-                    Title = item.SelectSingleNode(".//a").InnerText.Trim(),
+                    Title = item.SelectSingleNode(".//a").InnerText.Trim().Substring(6),
                     Link = item.SelectSingleNode(".//a").GetAttributeValue("href", "").Trim(),
                 });
             }
