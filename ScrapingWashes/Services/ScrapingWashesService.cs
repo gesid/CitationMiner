@@ -73,7 +73,7 @@ namespace ScrapingWashes.Services
                     Location = $"teste prod {DateTime.UtcNow}",
                     Date = date,
                     Proceedings = item.Link,
-                }, where: x => x.Title == item.Title);
+                }, where: x => x.Title == item.Title || x.Proceedings == item.Link);
 
                 var articles = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/div/div[2]").SelectNodes("//*[@id=\"pkp_content_main\"]/div/div/div[2]/div/ul/li");
 
