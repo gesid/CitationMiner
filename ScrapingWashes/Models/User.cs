@@ -12,7 +12,7 @@ namespace ScrapingWashes.Models
         public string UserName { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(64)]
         public string Password { get; set; }
     }
 }
