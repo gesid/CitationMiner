@@ -18,11 +18,11 @@ builder.Services.AddScoped<BaseModelRepository<AuthorPaper>>();
 builder.Services.AddScoped<ScrapingWashesService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+  options.UseNpgsql(builder.Configuration.GetConnectionString("SupabaseConnection")));
 
 builder.Services.AddHangfire(config =>
 {
-    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("SupabaseConnection"));
 });
 
 builder.Services.AddHangfireServer();
