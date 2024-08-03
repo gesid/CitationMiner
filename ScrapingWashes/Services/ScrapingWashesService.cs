@@ -32,7 +32,6 @@ namespace ScrapingWashes.Services
 
         public async Task<bool> Init()
         {
-
             var document = _driver.Load("https://sol.sbc.org.br/index.php/washes/issue/archive");
 
             // Take editions 
@@ -71,12 +70,11 @@ namespace ScrapingWashes.Services
                     Year = date.Year,
                     Title = item.Title,
                     Location = $"teste prod {DateTime.UtcNow}",
-                    Date = date,
+                    Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
                     Proceedings = item.Link,
                 }, where: x => x.Title == item.Title || x.Proceedings == item.Link);
 
                 var articles = document.DocumentNode.SelectSingleNode("//*[@id=\"pkp_content_main\"]/div/div/div[2]").SelectNodes("//*[@id=\"pkp_content_main\"]/div/div/div[2]/div/ul/li");
-
 
                 if (articles is null)
                 {
