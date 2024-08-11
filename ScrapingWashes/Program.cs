@@ -23,7 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddHangfire(config =>
 {
-    config.UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection"));
+    config.UsePostgreSqlStorage(options => options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 });
 
 builder.Services.AddHangfireServer();
