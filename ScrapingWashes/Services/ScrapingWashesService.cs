@@ -114,12 +114,12 @@ namespace ScrapingWashes.Services
                     Title = item.Title,
                     Year = item.Year,
                     Abstract = null,
-                    Summary = summary is not null ? summary.InnerText.Replace("Resumo", "").Trim() : null,
+                    Summary = summary?.InnerText.Replace("Resumo", "").Trim(),
                     Keywords = keywords is not null ? string.Join(", ", keywords.InnerText.Split(',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x))) : null,
                     Type = type is not null ? (type.InnerText.Trim() == "Posters" ? ETypePaper.Poster : type.InnerText.Trim() == "Artigos Curtos" ? ETypePaper.ShortPaper : type.InnerText.Trim() == "Artigos Completos" ? ETypePaper.FullPaper : null) : null,
                     Link = item.Link,
                     Citation = citation,
-                    References = references is not null ? references.InnerText.Trim() : null,
+                    References = references?.InnerText.Trim(),
                     EditionId = item.EditionId,
                 }, where: x => x.Title == item.Title);
 
@@ -129,17 +129,17 @@ namespace ScrapingWashes.Services
 
         private async Task SaveAutors(HtmlDocument document, int paperId)
         {
-            var authors = document.DocumentNode.SelectNodes("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/ul");
+            var authors = document.DocumentNode.SelectNodes("//*[@id=\"pkp_content_main\"]/div/article/div/div[1]/ul/li");
             foreach (var author in authors)
             {
-                var name = author.SelectSingleNode(".//li[1]/span[1]").InnerText.Trim();
-                var instituition = author.SelectSingleNode(".//li[1]/span[2]");
+                var name = author.SelectSingleNode(".//span[1]").InnerText.Trim();
+                var instituition = author.SelectSingleNode(".//span[2]");
 
                 var authorSaved = await _authorRepository.AddOrUpdateAsync(new Author
                 {
                     Name = name,
                     State = "teste",
-                    Instituition = instituition is not null ? instituition.InnerText.Trim() : null,
+                    Instituition = instituition?.InnerText.Trim(),
                     PaperId = paperId
                 }, where: x => x.Name == name && x.PaperId == paperId);
 
