@@ -41,7 +41,7 @@ app.UseAuthorization();
 
 app.UseHangfireDashboard("", new DashboardOptions
 {
-    Authorization = new[] { new MyAuthorizationFilter() },
+    Authorization = [new MyAuthorizationFilter()],
     IsReadOnlyFunc = (DashboardContext context) => false,
 });
 

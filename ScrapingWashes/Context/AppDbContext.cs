@@ -3,12 +3,8 @@ using ScrapingWashes.Models;
 
 namespace ScrapingWashes.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<Paper> Papers { get; set; }
         public DbSet<Edition> Editions { get; set; }
         public DbSet<Author> Authors { get; set; }

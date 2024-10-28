@@ -7,28 +7,19 @@ using System.Globalization;
 
 namespace ScrapingWashes.Services
 {
-    public class ScrapingWashesService
+    public class ScrapingWashesService(BaseModelRepository<Edition> editionRepository,
+        BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository,
+        BaseModelRepository<AuthorPaper> authorPaperRepository, IConfiguration configuration)
     {
-        private readonly BaseModelRepository<Edition> _editionRepository;
-        private readonly BaseModelRepository<Paper> _paperRepository;
-        private readonly BaseModelRepository<Author> _authorRepository;
-        private readonly BaseModelRepository<AuthorPaper> _authorPaperRepository;
-        private readonly IConfiguration _configuration;
+        private readonly BaseModelRepository<Edition> _editionRepository = editionRepository;
+        private readonly BaseModelRepository<Paper> _paperRepository = paperRepository;
+        private readonly BaseModelRepository<Author> _authorRepository = authorRepository;
+        private readonly BaseModelRepository<AuthorPaper> _authorPaperRepository = authorPaperRepository;
+        private readonly IConfiguration _configuration = configuration;
         public List<ScrapingDTO> _allEditions = [];
         public List<ScrapingDTO> _detailsArticles = [];
 
         public HtmlWeb _driver = new();
-
-        public ScrapingWashesService(BaseModelRepository<Edition> editionRepository,
-            BaseModelRepository<Paper> paperRepository, BaseModelRepository<Author> authorRepository,
-            BaseModelRepository<AuthorPaper> authorPaperRepository, IConfiguration configuration)
-        {
-            _editionRepository = editionRepository;
-            _paperRepository = paperRepository;
-            _authorRepository = authorRepository;
-            _authorPaperRepository = authorPaperRepository;
-            _configuration = configuration;
-        }
 
         public async Task<bool> Init()
         {
