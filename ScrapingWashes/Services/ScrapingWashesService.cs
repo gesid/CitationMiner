@@ -60,7 +60,7 @@ namespace ScrapingWashes.Services
                 {
                     Year = date.Year,
                     Title = item.Title,
-                    Location = $"teste prod {DateTime.UtcNow}",
+                    Location = "",
                     Date = DateTime.SpecifyKind(date, DateTimeKind.Utc),
                     Proceedings = item.Link,
                 }, where: x => x.Title == item.Title || x.Proceedings == item.Link);

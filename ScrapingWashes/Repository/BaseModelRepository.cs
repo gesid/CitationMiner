@@ -4,14 +4,9 @@ using System.Linq.Expressions;
 
 namespace ScrapingWashes.Repository
 {
-    public class BaseModelRepository<T> where T : class
+    public class BaseModelRepository<T>(AppDbContext context) where T : class
     {
-        private readonly AppDbContext _context;
-
-        public BaseModelRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        private readonly AppDbContext _context = context;
 
         public async Task<T> AddOrUpdateAsync(T entity, Expression<Func<T, bool>> where)
         {
