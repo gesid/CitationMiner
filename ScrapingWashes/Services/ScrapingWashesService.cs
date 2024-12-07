@@ -129,7 +129,7 @@ namespace ScrapingWashes.Services
                 var authorSaved = await _authorRepository.AddOrUpdateAsync(new Author
                 {
                     Name = name,
-                    State = "teste",
+                    State = "",
                     Instituition = instituition?.InnerText.Trim(),
                     PaperId = paperId
                 }, where: x => x.Name == name && x.PaperId == paperId);
