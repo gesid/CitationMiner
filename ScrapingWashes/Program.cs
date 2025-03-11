@@ -3,7 +3,6 @@ using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using ScrapingWashes.Context;
-using ScrapingWashes.Models;
 using ScrapingWashes.Repository;
 using ScrapingWashes.Services;
 
@@ -12,11 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<BaseModelRepository<Paper>>();
-builder.Services.AddScoped<BaseModelRepository<Edition>>();
-builder.Services.AddScoped<BaseModelRepository<Author>>();
-builder.Services.AddScoped<BaseModelRepository<AuthorPaper>>();
-builder.Services.AddScoped<ScrapingWashesService>();
+builder.Services.AddScoped(typeof(BaseModelRepository<>));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
   options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -56,7 +51,6 @@ public class MyAuthorizationFilter : IDashboardAuthorizationFilter
 {
     public bool Authorize(DashboardContext context)
     {
-        var httpContext = context.GetHttpContext();
         return true;
     }
 }
