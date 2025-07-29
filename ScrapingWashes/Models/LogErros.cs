@@ -6,7 +6,7 @@ namespace ScrapingWashes.Models
     {
         [Key]
         public int LogErrosId { get; set; }
-        public string Message { get; set; }
+        public required string Message { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }

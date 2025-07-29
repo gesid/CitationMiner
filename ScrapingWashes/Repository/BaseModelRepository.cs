@@ -26,7 +26,7 @@ namespace ScrapingWashes.Repository
                 {
                     var value = property.GetValue(entity);
 
-                    if (value == null || value == string.Empty)
+                    if (value == null)
                     {
                         continue;
                     }

@@ -9,10 +9,10 @@ namespace ScrapingWashes.Models
 
         [Required]
         [MaxLength(50)]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required]
         [MaxLength(64)]
-        public string Password { get; set; }
+        public required string Password { get; set; }
     }
 }
