@@ -1,56 +1,66 @@
-﻿using Hangfire;
-using Hangfire.Dashboard;
-using Hangfire.PostgreSql;
-using Microsoft.EntityFrameworkCore;
-using ScrapingWashes.Context;
-using ScrapingWashes.Repository;
-using ScrapingWashes.Services;
+﻿using ScrapingWashes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors();
-builder.Services.AddAuthorization();
-
-builder.Services.AddScoped(typeof(BaseModelRepository<>));
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-  options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddHangfire(config =>
-{
-    config.UsePostgreSqlStorage(options => options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
-});
-
-builder.Services.AddHangfireServer();
-
 var app = builder.Build();
 
-app.UseRouting();
+// Get configuration
+var configuration = app.Configuration;
 
-app.UseCors(option => option
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader());
+// Your spreadsheet ID from configuration
+var spreadsheetId = configuration["Logging:SpreadsheetId"] ?? "1VBYf5yWvbkUoTdCi9jX4LBteTpYg3EdSF8y20K1AwLQ";
 
-app.UseAuthorization();
+// Sheet name from configuration
+var sheetName = configuration["Logging:SheetName"] ?? "dataset";
 
-app.UseHangfireDashboard("", new DashboardOptions
+Console.WriteLine("=== ScrapingWashes - Citation Filler ===");
+Console.WriteLine($"Spreadsheet ID: {spreadsheetId}");
+Console.WriteLine($"Sheet Name: {sheetName}");
+Console.WriteLine();
+
+try
 {
-    Authorization = [new MyAuthorizationFilter()],
-    IsReadOnlyFunc = (DashboardContext context) => false,
-});
-
-RecurringJob.AddOrUpdate<ScrapingWashesService>(
-    "ScrapingWashesService",
-    x => x.Init(),
-    Cron.Daily(6, 0));
-
-app.Run();
-
-public class MyAuthorizationFilter : IDashboardAuthorizationFilter
-{
-    public bool Authorize(DashboardContext context)
+    // Initialize services
+    var sheetsService = new GoogleSheetsService(spreadsheetId);
+    
+    // Get available sheet names
+    Console.WriteLine("Fetching available sheets...");
+    var availableSheets = await sheetsService.GetSheetNamesAsync();
+    
+    Console.WriteLine("Available Tabs:");
+    foreach (var sheet in availableSheets)
     {
-        return true;
+        Console.WriteLine($" - {sheet}");
     }
+    Console.WriteLine();
+
+    // Check if configured sheet name exists
+    if (!availableSheets.Contains(sheetName))
+    {
+        Console.WriteLine($"⚠️ WARNING: The configured sheet name '{sheetName}' was not found.");
+        Console.WriteLine($"Defaulting to the first available sheet: '{availableSheets.First()}'");
+        sheetName = availableSheets.First();
+    }
+
+    var citationFiller = new CitationFillerService(sheetsService, configuration, sheetName);
+
+    // Run the citation filling process
+    await citationFiller.FillMissingCitationsAsync();
+
+    Console.WriteLine("\nPress any key to exit...");
+    Console.ReadKey();
+}
+catch (FileNotFoundException)
+{
+    Console.WriteLine("ERROR: credentials.json file not found!");
+    Console.WriteLine("Please follow the setup instructions to create OAuth credentials.");
+    Console.WriteLine("\nPress any key to exit...");
+    Console.ReadKey();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"ERROR: {ex.Message}");
+    Console.WriteLine($"\nStack trace: {ex.StackTrace}");
+    Console.WriteLine("\nPress any key to exit...");
+    Console.ReadKey();
 }
