@@ -1,4 +1,4 @@
-# ScrapingWashes - Citation Filler
+# CitationMiner - Citation Filler
 
 ## Descrição
 Esta é uma aplicação automatizada que preenche citações ausentes em uma planilha do Google Sheets, buscando informações no Google Scholar.
