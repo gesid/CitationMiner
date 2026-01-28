@@ -1,38 +1,42 @@
-# 📄 ScrapingWashes - Preenchedor de Citações Automático
+# CitationMiner
 
-Este projeto é um bot automatizado que preenche citações ausentes em uma planilha do Google Sheets. Ele lê títulos de artigos, busca no Google Scholar (via ScraperAPI) e atualiza a planilha automaticamente.
+## Descrição
+Esta é uma aplicação automatizada que preenche citações ausentes em uma planilha do Google Sheets, buscando informações no Google Scholar.
 
----
+## O que a aplicação faz
+- Lê títulos de artigos da **Coluna C** da planilha
+- Verifica se a **Coluna O** (citações) está vazia
+- Busca a citação no Google Scholar
+- Preenche a citação no formato APA na **Coluna O**
 
-## 🚀 Guia de Início Rápido (Passo a Passo)
+## Pré-requisitos
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/pt-br/download)
+- Conta Google com acesso à planilha
+- Credenciais OAuth do Google Cloud (veja `SETUP_OAUTH.md`)
 
-Este guia cobre desde a instalação até a execução e validação dos dados.
+## Instalação
 
-### 📋 Pré-requisitos
+1. Clone o repositório
+```shell
+git clone https://github.com/gesid/ScrapingWashes.git
+```
 
-1.  **Windows, Mac ou Linux**.
-2.  **.NET 8.0 SDK** instalado ([Download aqui](https://dotnet.microsoft.com/pt-br/download/dotnet/8.0)).
-3.  **Conta Google** (para acessar a planilha).
-4.  **Chave da ScraperAPI** (para evitar bloqueios do Google). Crie uma conta em [ScraperAPI](https://www.scraperapi.com/) e pegue sua chave.
+2. Navegue até o diretório do projeto:
+```shell
+cd ScrapingWashes
+```
 
----
+3. Configure as credenciais OAuth (veja `SETUP_OAUTH.md` para instruções detalhadas)
 
-### Passo 1: Clonar e Compilar o Projeto
+4. Restaure as dependências do projeto:
+```shell
+dotnet restore
+```
 
-1.  Abra seu terminal (PowerShell ou CMD no Windows).
-2.  Clone este repositório:
-    ```bash
-    git clone https://github.com/gesid/ScrapingWashes.git
-    ```
-3.  Entre na pasta do projeto:
-    ```bash
-    cd ScrapingWashes
-    ```
-4.  Baixe as dependências e compile o código:
-    ```bash
-    dotnet restore
-    dotnet build
-    ```
+5. Compile o projeto:
+```shell
+dotnet build
+```
 
 ---
 
