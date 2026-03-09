@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "ScrapingWashes": {
+    "CitationMiner": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

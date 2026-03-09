@@ -1,4 +1,4 @@
-﻿using ScrapingWashes.Services;
+using CitationMiner.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +13,7 @@ var spreadsheetId = configuration["Logging:SpreadsheetId"] ?? "1VBYf5yWvbkUoTdCi
 // Sheet name from configuration
 var sheetName = configuration["Logging:SheetName"] ?? "dataset";
 
-Console.WriteLine("=== ScrapingWashes - Citation Filler ===");
+Console.WriteLine("=== CitationMiner - Citation Filler ===");
 Console.WriteLine($"Spreadsheet ID: {spreadsheetId}");
 Console.WriteLine($"Sheet Name: {sheetName}");
 Console.WriteLine();
@@ -37,7 +37,7 @@ try
     // Check if configured sheet name exists
     if (!availableSheets.Contains(sheetName))
     {
-        Console.WriteLine($"⚠️ WARNING: The configured sheet name '{sheetName}' was not found.");
+        Console.WriteLine($"?? WARNING: The configured sheet name '{sheetName}' was not found.");
         Console.WriteLine($"Defaulting to the first available sheet: '{availableSheets.First()}'");
         sheetName = availableSheets.First();
     }

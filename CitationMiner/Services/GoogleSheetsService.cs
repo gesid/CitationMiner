@@ -4,12 +4,12 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Util.Store;
 
-namespace ScrapingWashes.Services
+namespace CitationMiner.Services
 {
     public class GoogleSheetsService
     {
         private readonly string[] _scopes = { SheetsService.Scope.Spreadsheets };
-        private readonly string _applicationName = "ScrapingWashes";
+        private readonly string _applicationName = "CitationMiner";
         private SheetsService? _sheetsService;
         private readonly string _spreadsheetId;
 
@@ -24,7 +24,7 @@ namespace ScrapingWashes.Services
                 return _sheetsService;
 
             UserCredential credential;
-            var credPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ScrapingWashes");
+            var credPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CitationMiner");
 
             using (var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
             {

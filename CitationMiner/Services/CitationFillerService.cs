@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace ScrapingWashes.Services
+namespace CitationMiner.Services
 {
     public class CitationFillerService
     {
