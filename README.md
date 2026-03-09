@@ -1,7 +1,7 @@
 # CitationMiner
 
 ## Descrição
-Esta é uma aplicação automatizada que preenche citações ausentes em uma planilha do Google Sheets, buscando informações no Google Scholar.
+Este é um Robô que preenche citações em uma planilha do Google Sheets, buscando informações no Google Scholar.
 
 ## O que a aplicação faz
 - Lê títulos de artigos da **Coluna C** da planilha
