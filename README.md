@@ -23,7 +23,7 @@ git clone https://github.com/gesid/CitationMiner.git
 
 2. Navegue até o diretório do projeto:
 ```shell
-cd ScrapingWashes
+cd CitationMiner
 ```
 
 3. Configure as credenciais OAuth (veja `SETUP_OAUTH.md` para instruções detalhadas)
@@ -45,7 +45,7 @@ dotnet build
 Para que o bot acesse sua planilha, você precisa criar credenciais no Google Cloud.
 
 1.  Acesse o [Google Cloud Console](https://console.cloud.google.com/).
-2.  Crie um **Novo Projeto** (ex: "ScrapingWashes").
+2.  Crie um **Novo Projeto** (ex: "CitationMiner").
 3.  Vá em **APIs e Serviços > Biblioteca** e ative a **Google Sheets API**.
 4.  Vá em **APIs e Serviços > Credenciais** e clique em **Criar Credenciais > ID do cliente OAuth**.
 5.  Configure a tela de permissão (se solicitado):
@@ -54,13 +54,13 @@ Para que o bot acesse sua planilha, você precisa criar credenciais no Google Cl
     *   **Usuários de teste**: Adicione **seu e-mail gmail** (importante!).
 6.  Em "Tipo de Aplicativo", escolha **App para computador** (Desktop app).
 7.  Baixe o arquivo JSON, renomeie para `credentials.json` e **coloque-o dentro da pasta principal do código**:
-    *   Caminho: `ScrapingWashes\ScrapingWashes\credentials.json`
+    *   Caminho: `CitationMiner\CitationMiner\credentials.json`
 
 ---
 
 ### Passo 3: Configurar o Projeto (appsettings.json)
 
-1.  Na pasta `ScrapingWashes\ScrapingWashes`, localize o arquivo `appsettings.template.json`.
+1.  Na pasta `CitationMiner\CitationMiner`, localize o arquivo `appsettings.template.json`.
 2.  Renomeie este arquivo para `appsettings.json`.
 3.  Abra o arquivo e preencha as informações:
 
@@ -101,9 +101,9 @@ Certifique-se de que sua planilha segue este padrão:
 
 1.  No terminal, execute o bot:
     ```bash
-    dotnet run --project ScrapingWashes
+    dotnet run --project CitationMiner
     ```
-    *(Ou entre na pasta ScrapingWashes e rode apenas `dotnet run`)*
+    *(Ou entre na pasta CitationMiner e rode apenas `dotnet run`)*
 
 2.  **Apenas na primeira vez**:
     *   Uma janela do navegador abrirá.
@@ -129,6 +129,6 @@ Após o bot terminar ou processar algumas linhas, faça uma verificação manual
 
 ## 🛠 Solução de Problemas
 
-*   **Erro "credentials.json not found"**: Verifique se o arquivo está na pasta correta (`ScrapingWashes\ScrapingWashes`).
+*   **Erro "credentials.json not found"**: Verifique se o arquivo está na pasta correta (`CitationMiner\CitationMiner`).
 *   **Erro de Permissão (403)**: Verifique se seu email está adicionado como "Usuário de Teste" no Google Cloud Console.
 *   **Nenhuma citação encontrada**: Verifique se sua chave ScraperAPI é válida e tem créditos.
