@@ -18,7 +18,7 @@ Esta é uma aplicação automatizada que preenche citações ausentes em uma pla
 
 1. Clone o repositório
 ```shell
-git clone https://github.com/gesid/ScrapingWashes.git
+git clone https://github.com/gesid/CitationMiner.git
 ```
 
 2. Navegue até o diretório do projeto:
