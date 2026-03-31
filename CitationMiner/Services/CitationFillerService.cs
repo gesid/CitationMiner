@@ -98,7 +98,7 @@ catch (Exception ex)
                 // Fetch citation from Google Scholar
                 Console.WriteLine($"Row {rowNumber}: Fetching citation for '{paperTitle}'...");
                 var newCitations = await FetchCitationFromScholar(paperTitle);
-
+                
                 if (!string.IsNullOrWhiteSpace(newCitations))
                 {
                     // Merge with existing citations (incremental update)
@@ -106,14 +106,14 @@ catch (Exception ex)
                     
                     if (!string.IsNullOrWhiteSpace(existingCitation) && existingCitation.Trim() != "#")
                     {
-                        // Parse existing citations
-                        var existingTitles = existingCitation.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        // Parse existing citations (ACEITA PONTO-E-VÍRGULA E QUEBRA DE LINHA)
+                        var existingTitles = existingCitation.Split(new[] { ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                             .Select(t => t.Trim())
                             .Where(t => !string.IsNullOrWhiteSpace(t))
                             .ToHashSet(StringComparer.OrdinalIgnoreCase);
                         
-                        // Parse new citations
-                        var newTitles = newCitations.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        // Parse new citations (ACEITA PONTO-E-VÍRGULA E QUEBRA DE LINHA)
+                        var newTitles = newCitations.Split(new[] { ';', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                             .Select(t => t.Trim())
                             .Where(t => !string.IsNullOrWhiteSpace(t));
                         
@@ -123,8 +123,8 @@ catch (Exception ex)
                             existingTitles.Add(newTitle);
                         }
                         
-                        // Rebuild the citation string
-                        finalCitations = string.Join("; ", existingTitles);
+                        // Rebuild the citation string (SALVA SEMPRE COM QUEBRA DE LINHA)
+                        finalCitations = string.Join("\n", existingTitles);
                     }
                     
                     // Add to batch update
@@ -177,8 +177,8 @@ catch (Exception ex)
         {
             try
             {
-                var serpApiKey = _configuration["Variables:ScraperApiKey"];
-                if (string.IsNullOrEmpty(serpApiKey) || serpApiKey == "YOUR_SCRAPERAPI_KEY_HERE")
+                var serpApiKey = _configuration["SerpApi:ApiKey"];
+                if (string.IsNullOrEmpty(serpApiKey) || serpApiKey == "YOUR_SERPAPI_KEY_HERE")
                 {
                     Console.WriteLine("⚠️  ERROR: SerpApi Key is missing in appsettings.json!");
                     return null;
@@ -338,7 +338,7 @@ catch (Exception ex)
                 }
 
                 // Join titles with semicolon separator
-                var result = string.Join("; ", citingPaperTitles);
+                var result = string.Join("\n", citingPaperTitles);
                 Console.WriteLine($"   Found {citingPaperTitles.Count} citing papers.");
                 
                 return result;
