@@ -8,10 +8,10 @@ var app = builder.Build();
 var configuration = app.Configuration;
 
 // Your spreadsheet ID from configuration
-var spreadsheetId = configuration["Logging:SpreadsheetId"] ?? "1VBYf5yWvbkUoTdCi9jX4LBteTpYg3EdSF8y20K1AwLQ";
+var spreadsheetId = configuration["GoogleSheets:SpreadsheetId"] ?? "1VBYf5yWvbkUoTdCi9jX4LBteTpYg3EdSF8y20K1AwLQ";
 
 // Sheet name from configuration
-var sheetName = configuration["Logging:SheetName"] ?? "dataset";
+var sheetName = configuration["GoogleSheets:SheetName"] ?? "dataset";
 
 Console.WriteLine("=== CitationMiner - Citation Filler ===");
 Console.WriteLine($"Spreadsheet ID: {spreadsheetId}");
